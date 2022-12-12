@@ -25,10 +25,11 @@ def main():
     print("Podaj n i p")
     n = int(input()) 
     p = float(input())
+    n=6
     edges = G(n,p)
     vertices_colors = greedyHarmoniousColoring(n,edges)
     visualize(edges,vertices_colors,"greedy.png")
-    vertices_colors = randomHarmoniousColoring(n,edges)
+    vertices_colors = randomizedGreedyHarmoniousColoring(n,edges)
     visualize(edges,vertices_colors,"random.png")
     vertices_colors = [-1 for i in range(n)]
     for number_of_colors in range(1,n+1):
@@ -84,17 +85,17 @@ def isSafeColoring(v,edges,vertices_colors,color):
             return False
     return True
 
-def randomHarmoniousColoring(n,edges):
+def randomizedGreedyHarmoniousColoring(n,edges):
     vertices_colors = [-1 for i in range(n)]
-    while -1 in vertices_colors:
-        # losowanie niepokolorowanego wierzchołka
-        v = random.randint(0,n-1)
-        while vertices_colors[v] != -1:
-            v = random.randint(0,n-1)
-        # kolorowanie losowym dozwolonym kolorem
+    vertices_priority = [[i,0] for i in range(n)]
+    for vertex in vertices_priority:
+        vertex[1] = random.randint(0,n-1)
+    vertices_priority.sort(key=lambda x: -x[1])
+    for vertex in vertices_priority:
+        v = vertex[0]
         color = random.randint(0,n-1)
-        while isSafeColoring(v,edges,vertices_colors,color) == False:
-            color = random.randint(0,n-1)
+        while isSafeColoring(v, edges, vertices_colors, color) == False:
+            color += 1
         vertices_colors[v] = color
     return vertices_colors
 
